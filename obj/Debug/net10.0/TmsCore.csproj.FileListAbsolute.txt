@@ -1,0 +1,14 @@
+C:\Users\miki computer\TmsCore\bin\Debug\net10.0\TmsCore.exe
+C:\Users\miki computer\TmsCore\bin\Debug\net10.0\TmsCore.deps.json
+C:\Users\miki computer\TmsCore\bin\Debug\net10.0\TmsCore.runtimeconfig.json
+C:\Users\miki computer\TmsCore\bin\Debug\net10.0\TmsCore.dll
+C:\Users\miki computer\TmsCore\bin\Debug\net10.0\TmsCore.pdb
+C:\Users\miki computer\TmsCore\obj\Debug\net10.0\TmsCore.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\miki computer\TmsCore\obj\Debug\net10.0\TmsCore.AssemblyInfoInputs.cache
+C:\Users\miki computer\TmsCore\obj\Debug\net10.0\TmsCore.AssemblyInfo.cs
+C:\Users\miki computer\TmsCore\obj\Debug\net10.0\TmsCore.csproj.CoreCompileInputs.cache
+C:\Users\miki computer\TmsCore\obj\Debug\net10.0\TmsCore.dll
+C:\Users\miki computer\TmsCore\obj\Debug\net10.0\refint\TmsCore.dll
+C:\Users\miki computer\TmsCore\obj\Debug\net10.0\TmsCore.pdb
+C:\Users\miki computer\TmsCore\obj\Debug\net10.0\TmsCore.genruntimeconfig.cache
+C:\Users\miki computer\TmsCore\obj\Debug\net10.0\ref\TmsCore.dll
