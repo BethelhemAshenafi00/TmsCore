@@ -1,4 +1,11 @@
-﻿
+﻿//M1-Lab-Session-1
+using System.Diagnostics;
+/* int? score = null;
+
+ Console.WriteLine(score.Value);
+
+ */
+
 /* Console.WriteLine("Enter Name");
 string? name = Console.ReadLine();
  */
@@ -20,64 +27,41 @@ double salary = Convert.ToDouble(Console.ReadLine());
 Console.WriteLine($"Salary is: " + salary); */
 
 
-//OOP concept Examples
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Reflection.Metadata;
-using System.Security.Cryptography;
-// 1 Encapsulation using private fields with public property 
-/* public class Person
-{
-    private string name; // private field
-    public string Name // public property for controlled access
-    {
-        get {return name; }
-        set
-        {
-            if(!string.IsNullOrWhiteSpace(value))
-            name = value;
-            else
-            throw new ArgumentException("Name cannot be empty");
-        }
-    }
-    public Person(string name)
-    {
-        Name = name;
-    }
-*/
+
+
+// session 3 Ex6
+//step 1
 var sw = Stopwatch.StartNew();
 for (int i = 0; i < 5; i++)
 {
     Thread.Sleep(300);
 }
-Console.WriteLine($"Blocking sequential:{sw.ElapsedMilliseconds}ms");
+Console.WriteLine($"Blocking sequential: {sw.ElapsedMilliseconds}ms");
 
-//Async but still sequential
 sw.Restart();
-for(int i =0; i < 5; i++)
+for (int i = 0; i < 5; i++)
 {
     await Task.Delay(300);
 }
 Console.WriteLine($"Async sequential: {sw.ElapsedMilliseconds}ms");
 
-// the right way
+
 sw.Restart();
-var tasks = Enumerable.Range(0, 5).Select(_=>Task.Delay(300));
+var tasks = Enumerable.Range(0, 5).Select(_ => Task.Delay(300));
 await Task.WhenAll(tasks);
-Console.WriteLine($"ASync parallel: {sw.ElapsedMilliseconds}ms");
+Console.WriteLine($"Async parallel: {sw.ElapsedMilliseconds}ms");
 
 
 
-// step 2
+// Step 2 Build the TMS Student Fetcher
 
 async Task<Student> FetchStudentAsync(string id)
 {
-    Console.WriteLine($"FEtching {id}...");
-    await Task.Delay(300);
+    Console.WriteLine($" Fetching {id}...");
+    await Task.Delay(300); // Simulate database latency
     return new Student
     {
-        id = id,
+        Id = id,
         Name = $"Student-{id}",
         Age = 20,
         GPA = id switch
@@ -87,15 +71,14 @@ async Task<Student> FetchStudentAsync(string id)
             "S3" => 3.5m,
             "S4" => 1.9m,
             "S5" => 3.2m,
-            _=> 2.5m
+            _ => 2.5m
         }
     };
 }
 
-//Now add a second method that fetches a course
 async Task<Course> FetchCourseAsync(string code)
 {
-    Console.WriteLine($"Fetching course {code}...");
+    Console.WriteLine($" Fetching course {code}...");
     await Task.Delay(200);
     return new Course
     {
@@ -105,12 +88,17 @@ async Task<Course> FetchCourseAsync(string code)
         {
             "CRS-101" => 2,
             "CRS-201" => 30,
-            "CRS-301"=> 15,
-            _=> 25
+            "CRS-301" => 15,
+            _ => 25
         }
     };
 }
+
+
+
+// step 3
 sw.Restart();
+
 string[] studentIds = ["S1", "S2", "S3", "S4", "S5"];
 string[] courseCodes = ["CRS-101", "CRS-201", "CRS-301"];
 var studentTasks = studentIds.Select(id => FetchStudentAsync(id));
@@ -118,9 +106,45 @@ var courseTasks = courseCodes.Select(code => FetchCourseAsync(code));
 
 Student[] students = await Task.WhenAll(studentTasks);
 Course[] courses = await Task.WhenAll(courseTasks);
-
-Console.WriteLine($"\nLoaded {students.Length} and {courses.Length} course in {sw.ElapsedMilliseconds}ms");
-foreach(var s in students)
+Console.WriteLine($"\nLoaded {students.Length} students and {courses.Length} courses in {sw.ElapsedMilliseconds}ms");
+foreach (var s in students)
 {
     Console.WriteLine($" {s.Name} GPA: {s.GPA}");
+}
+
+
+// Ex6 Part B
+var enrollCourse = new Course { Code = "CRS-101", Title = "C# Mastery", Capacity = 2 };
+var enrollService = new EnrollmentService();
+var enrollments = new List<EnrollmentRecord>();
+var failures = new List<string>();
+sw.Restart();
+foreach (var student in students)
+{
+    try
+    {
+        var record = enrollService.ProcessRegistration(student, enrollCourse);
+        enrollCourse.EnrolledCount++;
+        enrollments.Add(record);
+        Console.WriteLine($" Enrolled: {student.Name}");
+    }
+    catch (InvalidOperationException ex)
+    {
+        failures.Add($"{student.Name}: {ex.Message}");
+        Console.WriteLine($" Rejected: {student.Name} {ex.Message}");
+    }
+}
+
+// Ex6: Safe Fire-and-Forget
+async Task SendConfirmationAsync(Student student)
+{
+    try
+    {
+        await Task.Delay(100);
+        Console.WriteLine($" Email sent to {student.Name}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($" Email failed for {student.Name}: {ex.Message}");
+    }
 }
