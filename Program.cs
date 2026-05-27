@@ -71,11 +71,11 @@ catch (ArgumentException ex)
     Console.WriteLine($"Caught: {ex.Message}");
 }
 
-var s = new Student { Id = "STU-001", Name = "Abebe", Age = 20, GPA = 3.5m };
-Console.WriteLine($"Student: {s.Name} (Age: {s.Age}, GPA: {s.GPA})");   
+var student = new Student { Id = "STU-001", Name = "Abebe", Age = 20, GPA = 3.5m };
+Console.WriteLine($"Student: {student.Name} (Age: {student.Age}, GPA: {student.GPA})");   
 try
 {
-    s.Age = 15;
+    student.Age = 15;
 }
 catch (ArgumentOutOfRangeException ex)
 {
@@ -83,7 +83,7 @@ catch (ArgumentOutOfRangeException ex)
 }
 try
 {
-    s.GPA = 4.5m;
+    student.GPA = 4.5m;
 }
 catch (ArgumentOutOfRangeException ex)
 {
@@ -105,3 +105,85 @@ IGradable[] cohortAssessments = [
     new LabAssignment{Title = "Registration API", FunctionalityScore = 90m, CodeQualityScore = 85m}
 ];
 PrintGradeReport(cohortAssessments);
+
+
+var service = new EnrollmentService();
+
+var validStudent = new Student { Id = "S1", Name = "Abebe", Age = 22, GPA = 3.8m };
+var validCourse = new Course { Code = "CS-401", Title = "C# Patterns", Capacity = 30 };
+
+var result  = service.ProcessRegistration(validStudent, validCourse);
+Console.WriteLine($"Enrolled: {result.StudentID} in {result.CourseCode}");
+
+try
+{
+    service.ProcessRegistration(null, validCourse);
+}
+catch (ArgumentNullException ex)
+{
+    Console.WriteLine($"Guard caught: {ex.ParamName}");
+}
+
+var fullCourse = new Course{ Code = "CS-401", Title = "Full Course", Capacity = 1};
+fullCourse.EnrolledCount = 1;
+try
+{
+    service.ProcessRegistration(validStudent, fullCourse);
+}
+catch (InvalidOperationException ex)
+{
+    Console.WriteLine($"Business rule: {ex.Message}");
+}
+
+//Ex 5 step1
+List<Student> students = [
+    new Student {Id = "S1", Name = "Abebe", Age = 22, GPA = 3.8m},
+    new Student {Id = "S2", Name = "Alemu", Age = 19, GPA = 2.4m},
+    new Student {Id = "S3", Name = "Sara", Age = 21, GPA = 3.1m},
+    new Student {Id = "S4", Name = "Mulu", Age = 20, GPA = 3.9m},
+    new Student {Id = "S5", Name = "Yared", Age = 23, GPA = 2.0m},
+    new Student {Id = "S6", Name = "Lily", Age = 18, GPA = 3.5m},
+    new Student {Id = "S7", Name = "Dawit", Age = 24, GPA = 1.8m},
+    new Student {Id = "S8", Name = "Hana", Age = 22, GPA = 2.9m}
+];
+
+// step 2 
+var leaderboard = students
+    .Where(s => s.GPA >= 3.5m)
+    .OrderByDescending(s => s.GPA)
+    .Take(3)
+    .Select(s => s.Name)
+    .ToArray();
+
+Console.WriteLine($"Found {leaderboard.Count()} Honors Students");
+foreach (var name in leaderboard)
+{
+    Console.WriteLine($"- {name}");
+}
+
+// step 3 class Average 
+var averageGPA = students.Average(s => s.GPA);
+Console.WriteLine($"Average GPA: {averageGPA:F2}");
+
+decimal averageGpa = students.Average(s => s.GPA);
+Console.WriteLine($"\nClass Average GPA: {averageGpa:F2}");
+
+// step 4 group by academic standing
+var standingGroups = students.GroupBy(s => s.GPA >= 3.5m ? "Honor" : s.GPA >= 2.5m ? "Good Standing" : "Academic Warning");
+foreach (var group in standingGroups)
+{
+    Console.WriteLine("\n--- Academic Standing Report ---");
+    foreach (var s in group)
+    {
+        Console.WriteLine($"- {s.Name} (GPA: {s.GPA})");
+    }
+}
+
+// step 5 Collection Expressions with spread
+// TODO 7: Use the spread operator (..) to merge two arrays and append a value.
+// Stuck? Pattern: string[] combined = [..array1, ..array2, "extra"]
+
+string[] backendCourses = ["C#", "ASP.NET"];
+string[] frontendCourses = ["Typescript", "Angular"];
+string[] allCourses = [..backendCourses, ..frontendCourses, "SQL"];
+Console.WriteLine($"\nFull Curriculum: {string.Join(", ", allCourses)}");

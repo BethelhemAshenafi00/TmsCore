@@ -26,6 +26,7 @@ public class Course
     private int _capacity;
     public string? Code { get; set; }
     public string? Title { get; set; }
+    public int EnrolledCount { get; set; }
     public int Capacity
     {
         get => _capacity;
@@ -85,4 +86,3 @@ public class EnrollmentService
 
 
  */
-
